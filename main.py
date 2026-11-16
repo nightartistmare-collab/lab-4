@@ -1,22 +1,25 @@
-from utils.statistics import calculate_average, find_min, find_max
-from utils.reader import read_numbers
 from pathlib import Path
+
+from utils.reader import read_numbers, validate_numbers
+from utils.statistics import calculate_average, find_max, find_min
+
 
 def main():
     data_path = Path(__file__).resolve().parent / "data" / "measurements.txt"
-    print("Текущая директория", Path.cwd())
-    if data_path.exists():
-        print("Файл найден", data_path)
+    try:
         numbers = read_numbers(data_path)
-        print("Measurements:", numbers)
-        print("Average:", calculate_average(numbers))
-        print("Minimum:", find_min(numbers))
-        print("Maximum:", find_max(numbers))
-    else:
-        print("файл не найден",data_path)
+        validate_numbers(numbers)
+    except FileNotFoundError:
+        print(f"Ошибка: файл не найден: {data_path}")
+        return
+    except ValueError as error:
+        print(f"Ошибка данных: {error}")
+        return
 
-    logs_path = Path("logs")
-    logs_path.mkdir(exist_ok=True)
+    print("Измерения:", numbers)
+    print("Среднее:", calculate_average(numbers))
+    print("Минимум:", find_min(numbers))
+    print("Максимум:", find_max(numbers))
 
 
 if __name__ == "__main__":
