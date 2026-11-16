@@ -1,10 +1,20 @@
+import json
 import logging
 from pathlib import Path
 
 from utils.reader import read_numbers, validate_numbers
 from utils.statistics import calculate_average, find_max, find_min
 
-LOG_PATH = Path(__file__).resolve().parent / "logs" / "app.log"
+PROJECT_DIR = Path(__file__).resolve().parent
+
+
+def load_config(config_path):
+    with open(config_path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+CONFIG = load_config(PROJECT_DIR / "config.json")
+LOG_PATH = PROJECT_DIR / CONFIG["log_file"]
 LOG_PATH.parent.mkdir(exist_ok=True)
 
 logging.basicConfig(
@@ -17,7 +27,7 @@ logging.basicConfig(
 
 def main():
     logging.info("Запуск программы")
-    data_path = Path(__file__).resolve().parent / "data" / "measurements.txt"
+    data_path = PROJECT_DIR / CONFIG["input_file"]
     try:
         numbers = read_numbers(data_path)
         logging.info("Файл успешно прочитан: %s", data_path)
